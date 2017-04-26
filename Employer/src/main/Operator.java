@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -25,6 +26,7 @@ public class Operator extends JFrame {
 	JTable table;
 	ResultSet set;
 	JLabel show;
+	String input = null;
 	int row;
 	private JTextField ID;
 	private JTextField Name;
@@ -63,16 +65,20 @@ public class Operator extends JFrame {
 		model.addColumn("Name");
 		model.addColumn("Phone");
 		model.addColumn("Email");
-		model.addColumn("Company");
-		
-		String location = Operator.class.getResource("Operator.mdb").getPath().toString();//กำหนดชื่อไฟล์ที่จะต้องการใช้
-		conn = DriverManager.getConnection("jdbc:ucanaccess:/"+location);//นำไฟล์ที่จะใช้ในAttribute connString มาเปิดในMethod ตัวนี้
+		model.addColumn("Company");	
+		try{
+		//String location = Operator.class.getResource("Operator.mdb").getPath().toString();
+		String connString = "jdbc:ucanaccess://D:/Operator.mdb";//กำหนดชื่อไฟล์ที่จะต้องการใช้
+		//conn = DriverManager.getConnection("jdbc:ucanaccess:/"+location);
+		conn = DriverManager.getConnection(connString);//นำไฟล์ที่จะใช้ในAttribute connString มาเปิดในMethod ตัวนี้
 		s = conn.createStatement();//ทำการสร้างไฟล์ขึ้นและเรียกใช้
 	    strView = "SELECT * FROM trader";//เลือกที่ต้องการโชว์โดย SELECT * FROM และชื่อ Table ใน Attribute
 	    set = s.executeQuery(strView);//ทำการเรียกมาใช้	   
 	    row = 0;		
 		scrollPane.setViewportView(table);		
-		
+		}catch(Exception e){
+			JOptionPane.showMessageDialog(null, "Dowload and File must in Drive D only !!!");
+		}
 		JButton Github = new JButton("Github");
 		Github.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -119,9 +125,10 @@ public class Operator extends JFrame {
 		JButton Delete = new JButton("Delete");
 		Delete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				try{
 				String del = String.valueOf(ID.getText());
 				String Del = "DELETE FROM trader WHERE ID = '"+del+"' ";
-			    try {
+			    
 					s.execute(Del);
 				} catch (SQLException e1) {					
 					e1.printStackTrace();
@@ -169,11 +176,13 @@ public class Operator extends JFrame {
 		Insert.setBounds(475, 206, 89, 23);
 		Insert.addActionListener(new ActionListener() {			
 			public void actionPerformed(ActionEvent arg0) {
+				
 				String N = String.valueOf(Name.getText());//ใส่ค่าที่ต้องการเพิ่ม		
 				String P = String.valueOf(Phone.getText()); 
 				String E = String.valueOf(Email.getText());				
 				String C = String.valueOf(Company.getText());
-			    if(N.isEmpty() || P.isEmpty()  || E.isEmpty() || C.isEmpty()){
+						
+				if(N.isEmpty() || P.isEmpty()  || E.isEmpty() || C.isEmpty()){
 			    	show.setText("Please Input Information");
 			    }
 			    else{
@@ -185,7 +194,7 @@ public class Operator extends JFrame {
 					e.printStackTrace();
 				}//Update ข้อมูล
 				 show.setText("Insert Completely Please Open new Program for see information");	
-			    }
+			    }				
 			}
 		});
 		getContentPane().add(Insert);
@@ -204,8 +213,13 @@ public class Operator extends JFrame {
 		
 		JLabel lblNewLabel_3 = new JLabel("Company");
 		lblNewLabel_3.setBounds(401, 182, 46, 14);
-		getContentPane().add(lblNewLabel_3);		
+		getContentPane().add(lblNewLabel_3);
 		
-		}			
+		JLabel lblNewLabel_4 = new JLabel("Dowload File in Github");
+		lblNewLabel_4.setBounds(417, 358, 135, 14);
+		getContentPane().add(lblNewLabel_4);
+		
+	}
 }
+
 
